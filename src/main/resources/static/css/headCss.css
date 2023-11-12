@@ -1,0 +1,10 @@
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+#header {
+    background: rgba(5, 222, 179, .5) !important;
+}
+

@@ -1,0 +1,65 @@
+.block1 {
+    position: absolute;
+    top: 50%;
+    left: 52%;
+    transform: translate(-50%, -50%);
+    width: 20%;
+}
+
+label[name="title"] {
+    display: block;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 35px;
+}
+
+select[name="usersList"] {
+    display: block;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+button {
+    width: 80%;
+    height: 40px;
+    margin: 0 auto;
+    display: block;
+}
+
+
+.block2 {
+    position: absolute;
+    top: 50%;
+    left: 32%;
+    transform: translate(-50%, -50%);
+    height: 100px; /* явно заданная высота блока */
+    padding: 10px 0; /* отступы сверху и снизу */
+}
+
+select[name="sort"], input[name="myInput"] {
+    display: block;
+    width: 100%;
+    height: 40px; /* явно заданная высота select и input */
+    margin-bottom: 10px; /* отступ между элементами */
+    border-left: 1px solid black; /* задаем левую границу */
+}
+
+body {
+    background: rgba(239, 233, 233, 1);
+}
+
+button[name="buttonOk"] {
+    font-size: 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+}
+
+select[name="sort"] {
+    font-size: 20px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+

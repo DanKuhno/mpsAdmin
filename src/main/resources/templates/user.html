@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+<head>
+  <title th:text="${user.username}" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/headCss.css" th:href="@{/css/headCss.css}">
+  <link rel="stylesheet" type="text/css" href="/css/userCss.css" th:href="@{/css/userCss.css}">
+
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+
+<div th:insert="blocks/header :: header" class="parent">
+  <div class="my-header" style="background: rgba(5, 222, 179, .5);" id="header"></div>
+</div>
+
+
+
+
+
+<main role="main">
+  <div class="container">
+    <div class = "block1" style="font-size: 20px;">
+    <span th:text="'Имя пользователя: ' + ${user.username}" /> <br>
+    <span th:text="'Возраст: ' + ${user.age}" /> <br>
+    <span th:text="'Пол: ' + ${user.gender != null ? (user.gender ? 'Мужской' : 'Женский') : '-'}" /> <br>
+    <span> Номер попытки </span>
+
+    <select id="selectAttempt" name="usersList" onchange="reloadPageWithParam()">
+      <option th:each="attempt, i: ${attempts}" th:value="${attempt.id_attempt}" th:text="${i.index+1}" th:selected="${attempt.id_attempt == idAttempt}"> style="font-size: 30px"></option>
+    </select>
+  </div>
+  </div>
+
+  <div class="container">
+    <div class = "block3" style="font-size: 20px;">
+      <table>
+        <tr>
+          <td>Число предельных категорий:      </td>
+          <td><span th:text="${NPK}" /></td>
+        </tr>
+        <tr>
+          <td>Число узловых категорий:</td>
+          <td><span th:text="${NUK}" /></td>
+        </tr>
+        <tr>
+          <td>Общее число категорий:</td>
+          <td><span th:text="${countAnswer}" /></td>
+        </tr>
+        <tr>
+          <td>Средняя длина цепей:</td>
+          <td><span th:text="${averagePathLength}" /></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <span class = "interp"> <b>Результаты тестирования:</b> на основании общего числа категорий и длины цепей редукция системы смыслов не выявлена. Обнаружено низкое число узловых категорий.
+    Испытуемого предлагается отнести к группе <em>«Здоровый с жизненными проблемами»</em>. </span>
+
+  <script th:inline="javascript">
+    function reloadPageWithParam(id_users = [[${user.id_users}]]) {
+      //th:text="'Имя пользователя: ' + ${user.username}"
+      var select = document.getElementById("selectAttempt");
+      var idAttempt = select.options[select.selectedIndex].value;
+      console.log(id_users);
+      var url = id_users + "?idattempt=" + idAttempt;
+      console.log(url);
+      window.location.href = url;
+
+    }
+  </script>
+
+  <div class = "block2">
+  <svg width="900" height="600" ></svg>
+  <script th:inline="javascript">
+
+    var nodes = [[${nodes}]];
+    var links = [[${links}]];
+    console.log(nodes);
+    console.log(links);
+
+    const width=900;
+    const height=600;
+
+    const svg = d3.select("svg");
+    const simulation = d3.forceSimulation(nodes)
+            .force("link", d3.forceLink(links).id(d => d.id).distance(100).strength(1))
+            .force("charge", d3.forceManyBody().strength(-40))
+            .force("center", d3.forceCenter(svg.attr("width") / 2, svg.attr("height") / 2))
+            .force("collide", d3.forceCollide().radius(1)); // Установите значение радиуса величины, соответствующей радиусу вершин
+
+
+
+
+    const link = svg.selectAll("line")
+            .data(links)
+            .enter().append("line")
+            .attr("stroke", "#999")
+            .attr("stroke-opacity", 0.6)
+            .attr("stroke-width", 2);
+
+    const node = svg.selectAll("circle")
+            .data(nodes)
+            .enter().append("circle")
+            .attr("r", 10)
+            //.attr("fill", "steelblue")
+            .attr("fill", d => d.class)
+            //.attr("class", d => d.class)
+            .call(d3.drag()
+                    .on("start", (event, d) => {
+                      if (!event.active) simulation.alphaTarget(0.3).restart();
+                      if (event.x < 0) {
+                        d.fx = 0;
+                      } else if (event.x > width) {
+                        d.fx = width;
+                      } else {
+                        d.fx = event.x;
+                      }
+
+                      if (event.y < 0) {
+                        d.fy = 0;
+                      } else if (event.y > height) {
+                        d.fy = height;
+                      } else {
+                        d.fy = event.y;
+                      }
+                    })
+                    .on("drag", (event, d) => {
+
+                      //d.fx = event.x;
+                      //d.fy = event.y;
+                      d.fx = event.x < 0 ? 0 : event.x > width ? width : event.x; // ограничиваем координаты по горизонтали
+                      d.fy = event.y < 0 ? 0 : event.y > height ? height : event.y; // ограничиваем координаты по вертикали
+
+
+
+                    })
+                    .on("end", (event, d) => {
+                      if (!event.active) simulation.alphaTarget(0);
+                      d.fx = null;
+                      d.fy = null;
+                    })
+            );
+
+    const label = svg.selectAll("text")
+            .data(nodes)
+            .enter().append("text")
+            .text(d => d.text)
+            .style("font-size", "12px")
+            .style("fill", "black")
+            .style("text-anchor", "start")
+            .style("alignment-baseline", "central");
+
+    simulation.on("tick", () => {
+      link.attr("x1", d => d.source.x)
+              .attr("y1", d => d.source.y)
+              .attr("x2", d => d.target.x)
+              .attr("y2", d => d.target.y);
+      node.attr("cx", d => {
+          return d.x < 0+5 ? 0 : d.x > width-5 ? width : d.x;
+      })
+              .attr("cy", d => {
+                return d.y < 0+5 ? 0 : d.y > height-5 ? height : d.y;
+              })
+
+              //.attr("cy", d => d.y);
+      label.attr("x", d => d.x+10)
+              .attr("y", d => d.y);
+    });
+  </script>
+  </div>
+
+
+
+</main>
+
+<div th:insert="blocks/footer :: footer"> </div>
+
+</body>
+</html>

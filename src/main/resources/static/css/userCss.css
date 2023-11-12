@@ -1,0 +1,54 @@
+.block1 {
+    position: absolute;
+    top: 35%;
+    left: 20%;
+    transform: translate(-50%, -50%);
+    width: 20%;
+    line-height: 2;
+
+}
+
+.block3 {
+    position: absolute;
+    top: calc(70%); /* расположить на расстоянии 2.5 высоты строки под block1 */
+    left: 19%;
+    transform: translate(-50%, -50%);
+    width: 20%;
+    line-height: 2;
+}
+
+table td {
+    padding: 0 10px;
+}
+
+
+.block2 {
+    position: absolute;
+    top: 15%;
+    left: 65%;
+    transform: translate(-50%, -50%);
+    height: 100px; /* явно заданная высота блока */
+    padding: 10px 0; /* отступы сверху и снизу */
+}
+
+svg {
+    border: 1px solid #9a9a9a;
+}
+
+
+select {
+    width: 20%;
+    margin-bottom: 10px; /* отступ между элементами */
+    border-left: 1px solid black; /* задаем левую границу */
+}
+body {
+    background: rgba(239, 233, 233, 1);
+}
+
+.interp {
+    position: absolute;
+    top: 75%;
+    left: 41%;
+    width: 50%;
+    font-size: 20px;
+}
